@@ -75,6 +75,11 @@
           <height>400</height>
          </size>
         </property>
+        <property name="font">
+         <font>
+          <pointsize>14</pointsize>
+         </font>
+        </property>
         <property name="readOnly">
          <bool>true</bool>
         </property>

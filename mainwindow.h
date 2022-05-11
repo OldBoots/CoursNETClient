@@ -16,6 +16,7 @@
 #include <pthread.h>
 
 #include "singin.h"
+#include "mythread.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -31,11 +32,11 @@ public:
 
 private:
     void init_sock();
-    void *recvMsgHandler();
+    void *recvMsgHandler(void *);
 
 private slots:
     void slot_butt_send();
-
+    void update (QString str);
 private:
     Ui::MainWindow *ui;
     QStringList date_serv;
@@ -49,6 +50,8 @@ private:
     int max_msg_len;
     int packet_len;
     int sockfd;
+
+    MyThread *thread;
 };
 
 #endif // MAINWINDOW_H

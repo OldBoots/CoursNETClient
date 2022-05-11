@@ -28,17 +28,22 @@ MainWindow::MainWindow(QWidget *parent)
 
     ui->butt_send->setIcon(QPixmap(":/key_Enter.png").scaled(ui->butt_send->size()));
     ui->butt_send->setIconSize(ui->butt_send->size());
+
     connect(ui->butt_send, SIGNAL(clicked()), this, SLOT(slot_butt_send()));
 }
 
 void MainWindow::slot_butt_send(){
-//    qDebug() << ui->plane_send->toPlainText();
     send(sockfd, ui->plane_send->toPlainText().toUtf8().constData(), ui->plane_send->toPlainText().size() + 1, 0);
     ui->plane_send->clear();
 }
 
-void *MainWindow::recvMsgHandler() {
-//    QString message;
+void MainWindow::update (QString str)
+{
+    ui->plane_recv->insertPlainText(str);
+}
+
+void *MainWindow::recvMsgHandler(void *) {
+    //    QString message;
     char msg[255];
     while (1) {
         int receive = ::recv(sockfd, msg, strlen(msg) + 1, 0);
@@ -46,7 +51,7 @@ void *MainWindow::recvMsgHandler() {
             ui->plane_recv->setText(ui->plane_recv->toPlainText() + "\n\nghghg");
             printf("%s", msg);
         }
-//        message.clear();
+        //        message.clear();
         memset(&msg, 0, strlen(msg) + 1);
     }
     pthread_exit(0);
@@ -68,16 +73,15 @@ void MainWindow::init_sock(){
     // Send username
     send(sockfd, nick_me.toUtf8().constData(), 32, 0);
 
-//    pthread_t sendMsgThread;
-//    if (::pthread_create(&sendMsgThread, NULL, sendMsgHandler, NULL) != 0) {
-//        perror("ERROR: can not create sending thread\n");
+    thread = new MyThread(sockfd);
+    connect(thread, SIGNAL(send(QString)), this, SLOT(update(QString)));
+    thread->start();
+
+//    pthread_t recvMsgThread;
+//    if (::pthread_create(&recvMsgThread, NULL, MainWindow::recvMsgHandler, NULL) != 0) {
+//        perror("ERROR: can not create receving thread\n");
 //        exit(0);
 //    }
-    pthread_t recvMsgThread;
-    if (::pthread_create(&recvMsgThread, NULL, MainWindow::recvMsgHandler, NULL) != 0) {
-        perror("ERROR: can not create receving thread\n");
-        exit(0);
-    }
 }
 
 MainWindow::~MainWindow()

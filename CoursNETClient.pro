@@ -11,10 +11,12 @@ CONFIG += c++11
 SOURCES += \
     main.cpp \
     mainwindow.cpp \
+    mythread.cpp \
     singin.cpp
 
 HEADERS += \
     mainwindow.h \
+    mythread.h \
     singin.h
 
 FORMS += \
