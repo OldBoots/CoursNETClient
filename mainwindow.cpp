@@ -1,15 +1,9 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-static QString nick_me;
 
-static int max_clients;
-static int buffer_size;
-static int lenght;
-static int max_msg_len;
-static int packet_len;
 
-static int sockfd; // Main socket
+//static int sockfd; // Main socket
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -27,44 +21,35 @@ MainWindow::MainWindow(QWidget *parent)
     max_msg_len = 255;
     packet_len =  255 + 32;
     nick_me = date_serv[0];
+
     sockfd = 0;
 
     init_sock();
 
     ui->butt_send->setIcon(QPixmap(":/key_Enter.png").scaled(ui->butt_send->size()));
     ui->butt_send->setIconSize(ui->butt_send->size());
-    connect(ui->butt_send, SIGNAL(clicked()), this, SLOT());
+    connect(ui->butt_send, SIGNAL(clicked()), this, SLOT(slot_butt_send()));
 }
 
-void *MainWindow::sendMsgHandler(void* t) {
-    QString message;
-    char buffer[64] = {};
-    while (1) {
-        if (::strcmp(message.toStdString().c_str(), "exit") == 0) // exit app when user input "exit"
-            break;
-        else {
-            sprintf(buffer, "%s: %s\n", nick_me.toUtf8().constData(), message.toStdString().c_str());
-            send(sockfd, buffer, strlen(buffer), 0);
-        }
-        message.clear();
-        memset(&buffer, 0, lenght + 32);
-    }
-    qDebug("fffdfdfd");
-    return t;
+void MainWindow::slot_butt_send(){
+//    qDebug() << ui->plane_send->toPlainText();
+    send(sockfd, ui->plane_send->toPlainText().toUtf8().constData(), ui->plane_send->toPlainText().size() + 1, 0);
+    ui->plane_send->clear();
 }
 
-void *MainWindow::recvMsgHandler(void* t) {
-    QString message;
+void *MainWindow::recvMsgHandler() {
+//    QString message;
+    char msg[255];
     while (1) {
-        int receive = ::recv(sockfd, message.data(), packet_len, 0);
+        int receive = ::recv(sockfd, msg, strlen(msg) + 1, 0);
         if (receive > 0) { // succesfully
-            printf("%s", message.data());
-            //            customPrintStr();
+            ui->plane_recv->setText(ui->plane_recv->toPlainText() + "\n\nghghg");
+            printf("%s", msg);
         }
-        message.clear();
-//        memset(message.data(), 0, message.size() + 1/*sizeof(message)*/);
+//        message.clear();
+        memset(&msg, 0, strlen(msg) + 1);
     }
-    return t;
+    pthread_exit(0);
 }
 
 void MainWindow::init_sock(){
@@ -82,17 +67,17 @@ void MainWindow::init_sock(){
     }
     // Send username
     send(sockfd, nick_me.toUtf8().constData(), 32, 0);
-    pthread_t sendMsgThread;
-    if (::pthread_create(&sendMsgThread, NULL, sendMsgHandler, NULL) != 0) {
-        perror("ERROR: can not create sending thread\n");
-        exit(0);
-    }
+
+//    pthread_t sendMsgThread;
+//    if (::pthread_create(&sendMsgThread, NULL, sendMsgHandler, NULL) != 0) {
+//        perror("ERROR: can not create sending thread\n");
+//        exit(0);
+//    }
     pthread_t recvMsgThread;
-    if (::pthread_create(&recvMsgThread, NULL, recvMsgHandler, NULL) != 0) {
+    if (::pthread_create(&recvMsgThread, NULL, MainWindow::recvMsgHandler, NULL) != 0) {
         perror("ERROR: can not create receving thread\n");
         exit(0);
     }
-    ::close(sockfd);
 }
 
 MainWindow::~MainWindow()

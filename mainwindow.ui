@@ -18,7 +18,7 @@
     <item>
      <layout class="QGridLayout" name="gridLayout">
       <item row="1" column="0">
-       <widget class="QTextEdit" name="textEdit_2">
+       <widget class="QTextEdit" name="plane_send">
         <property name="minimumSize">
          <size>
           <width>400</width>

@@ -28,3 +28,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 RESOURCES += \
     src.qrc
+
+QMAKE_CXXFLAGS += -std=c++0x -pthread
+QMAKE_CFLAGS += -std=gnu++0x -pthread
+LIBS += -pthread

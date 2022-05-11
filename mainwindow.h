@@ -31,14 +31,24 @@ public:
 
 private:
     void init_sock();
-    static void *sendMsgHandler(void *);
-    static void *recvMsgHandler(void *);
+    void *recvMsgHandler();
+
+private slots:
+    void slot_butt_send();
 
 private:
     Ui::MainWindow *ui;
     QStringList date_serv;
     SingIn d_win;
 
+    QString nick_me;
+
+    int max_clients;
+    int buffer_size;
+    int lenght;
+    int max_msg_len;
+    int packet_len;
+    int sockfd;
 };
 
 #endif // MAINWINDOW_H
