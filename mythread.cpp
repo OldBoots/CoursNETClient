@@ -8,6 +8,7 @@ MyThread::MyThread(int sock_id) :
 
 void MyThread::run(){
     char msg[255];
+    // Запускаем цикл прослушки
     while (1) {
         int receive = ::recv(socket, msg, strlen(msg) + 1, 0);
         if (receive > 0) { // succesfully

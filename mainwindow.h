@@ -13,7 +13,6 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
-#include <pthread.h>
 
 #include "singin.h"
 #include "mythread.h"
@@ -32,25 +31,19 @@ public:
 
 private:
     void init_sock();
-    void *recvMsgHandler(void *);
 
 private slots:
     void slot_butt_send();
     void update (QString str);
+
 private:
     Ui::MainWindow *ui;
-    QStringList date_serv;
+//    QStringList date_serv;
     SingIn d_win;
-
-    QString nick_me;
-
-    int max_clients;
-    int buffer_size;
-    int lenght;
-    int max_msg_len;
-    int packet_len;
+    QString username;
+    QString ip;
+    int port;
     int sockfd;
-
     MyThread *thread;
 };
 
